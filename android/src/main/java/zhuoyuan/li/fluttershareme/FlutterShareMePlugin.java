@@ -1,6 +1,5 @@
 package zhuoyuan.li.fluttershareme;
 
-
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -56,6 +55,12 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
     private final static String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
     private final static String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
     private final static String TWITTER_PACKAGE_NAME = "com.twitter.android";
+    private final static String TELEGRAM_PACKAGE_NAME = "org.telegram.messenger";
+    private final static String WHATAPPW4B_PACKAGE_NAME = "com.whatsapp.w4b";
+    private final static String WHATAPP_PACKAGE_NAME = "com.whatsapp";
+    private final static String MESSENGER_PACKAGE_NAME = "com.facebook.orca";
+    private final static String LINE_PACKAGE_NAME = "jp.naver.line.android";
+    private final static String BEEBUSH_PACKAGE_NAME = "com.beebush";
 
     private Activity activity;
     private static CallbackManager callbackManager;
@@ -88,6 +93,26 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
         callbackManager = CallbackManager.Factory.create();
     }
 
+    @Override
+    public void onAttachedToActivity(ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+
+    }
+
     /**
      * method
      *
@@ -101,17 +126,9 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
         final PackageManager pm = activity.getPackageManager();
         switch (call.method) {
             case _methodFaceBook:
-                // url = call.argument("url");
-                // msg = call.argument("msg");
-                // shareToFacebook(msg, url, result);
-                try {
-                    pm.getPackageInfo(FACEBOOK_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
-                    facebookShare(call.<String>argument("caption"), call.<String>argument("path"));
-                    result.success(true);
-                } catch (PackageManager.NameNotFoundException e) {
-                    openPlayStore(FACEBOOK_PACKAGE_NAME);
-                    result.success(false);
-                }
+                url = call.argument("url");
+                msg = call.argument("msg");
+                shareToFacebook(msg, url, result);
                 break;
             case _methodTwitter:
                 url = call.argument("url");
@@ -127,7 +144,8 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             case _methodWhatsAppBusiness:
                 msg = call.argument("msg");
                 url = call.argument("url");
-                shareWhatsApp(url, msg, result, true);
+                openMarket = call.argument("openMarket");
+                shareWhatsApp(url, msg, result, true, openMarket);
                 break;
             case _methodWhatsAppPersonal:
                 msg = call.argument("msg");
@@ -188,13 +206,56 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
     }
 
     /**
+     * share to Facebook
+     *
+     * @param url    String
+     * @param msg    String
+     * @param result Result
+     */
+    private void shareToFacebook(String msg, String url, Result result) {
+        try {
+
+            final Uri uri = Uri.parse(url);
+            final ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri).setQuote(msg).build();
+            final ShareDialog shareDialog = new ShareDialog(activity);
+            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {
+                    methodChannel.invokeMethod("onSuccess", null);
+                    Log.d("SocialSharePlugin", "Sharing successfully done.");
+                }
+
+                @Override
+                public void onCancel() {
+                    methodChannel.invokeMethod("onCancel", null);
+                    Log.d("SocialSharePlugin", "Sharing cancelled.");
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    methodChannel.invokeMethod("onError", error.getMessage());
+                    Log.d("SocialSharePlugin", "Sharing error occurred.");
+                }
+            });
+
+            if (ShareDialog.canShow(ShareLinkContent.class)) {
+                shareDialog.show(content);
+                result.success("success");
+            }
+        } catch (Exception e) {
+            System.out.println("---------------onError");
+            System.out.println(e);
+        }
+
+    }
+
+    /**
      * share to twitter
      *
      * @param url    String
      * @param msg    String
      * @param result Result
      */
-
     private void shareToTwitter(String url, String msg, Result result) {
         try {
             TweetComposer.Builder builder = new TweetComposer.Builder(activity)
@@ -202,117 +263,15 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             if (url != null && url.length() > 0) {
                 builder.url(new URL(url));
             }
-
             builder.show();
             result.success("success");
+            methodChannel.invokeMethod("onSuccess", "open-share");
         } catch (MalformedURLException e) {
+            methodChannel.invokeMethod("onError", e);
             e.printStackTrace();
         }
     }
 
-    /**
-     * share to Facebook
-     *
-     * @param url    String
-     * @param msg    String
-     * @param result Result
-     */
-    // private void shareToFacebook(String msg, String url, Result result) {
-    //     try {
-            
-    //         final Uri uri = Uri.parse(url);
-    //         final ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri).setQuote(msg).build();
-    //         final ShareDialog shareDialog = new ShareDialog(activity);
-    //         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-    //             @Override
-    //             public void onSuccess(Sharer.Result result) {
-    //                 methodChannel.invokeMethod("onSuccess", null);
-    //                 Log.d("SocialSharePlugin", "Sharing successfully done.");
-    //             }
-    
-    //             @Override
-    //             public void onCancel() {
-    //                 methodChannel.invokeMethod("onCancel", null);
-    //                 Log.d("SocialSharePlugin", "Sharing cancelled.");
-    //             }
-    
-    //             @Override
-    //             public void onError(FacebookException error) {
-    //                 methodChannel.invokeMethod("onError", error.getMessage());
-    //                 Log.d("SocialSharePlugin", "Sharing error occurred.");
-    //             }
-    //         });
-    
-    //         if (ShareDialog.canShow(ShareLinkContent.class)) {
-    //             shareDialog.show(content);
-    //             result.success("success");
-    //         }
-    //     } catch (Exception e) {
-    //         System.out.println("---------------onError");
-    //         System.out.println(e);
-    //     }
-
-    // }
-    private void facebookShare(String caption, String mediaPath) {
-        final File media = new File(mediaPath);
-        final Uri uri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".social.share.fileprovider",
-                media);
-        final SharePhoto photo = new SharePhoto.Builder().setImageUrl(uri).setCaption(caption).build();
-        final SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo).build();
-        final ShareDialog shareDialog = new ShareDialog(activity);
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            @Override
-            public void onSuccess(Sharer.Result result) {
-                channel.invokeMethod("onSuccess", null);
-                Log.d("SocialSharePlugin", "Sharing successfully done.");
-            }
-
-            @Override
-            public void onCancel() {
-                channel.invokeMethod("onCancel", null);
-                Log.d("SocialSharePlugin", "Sharing cancelled.");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                channel.invokeMethod("onError", error.getMessage());
-                Log.d("SocialSharePlugin", "Sharing error occurred.");
-            }
-        });
-
-        if (ShareDialog.canShow(SharePhotoContent.class)) {
-            shareDialog.show(content);
-        }
-    }
-
-    private void facebookShareLink(String quote, String url) {
-        final Uri uri = Uri.parse(url);
-        final ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri).setQuote(quote).build();
-        final ShareDialog shareDialog = new ShareDialog(activity);
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            @Override
-            public void onSuccess(Sharer.Result result) {
-                channel.invokeMethod("onSuccess", null);
-                Log.d("SocialSharePlugin", "Sharing successfully done.");
-            }
-
-            @Override
-            public void onCancel() {
-                channel.invokeMethod("onCancel", null);
-                Log.d("SocialSharePlugin", "Sharing cancelled.");
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                channel.invokeMethod("onError", error.getMessage());
-                Log.d("SocialSharePlugin", "Sharing error occurred.");
-            }
-        });
-
-        if (ShareDialog.canShow(ShareLinkContent.class)) {
-            shareDialog.show(content);
-        }
-    }
     /**
      * share to whatsapp
      *
@@ -320,148 +279,41 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
      * @param result             Result
      * @param shareToWhatsAppBiz boolean
      */
-    private void shareWhatsApp(String imagePath, String msg, Result result, boolean shareToWhatsAppBiz, boolean openMarket) {
+    private void shareWhatsApp(String imagePath, String msg, Result result, boolean shareToWhatsAppBiz,
+            boolean openMarket) {
         try {
             Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
-            
-            whatsappIntent.setPackage(shareToWhatsAppBiz ? "com.whatsapp.w4b" : "com.whatsapp");
+
+            whatsappIntent.setPackage(shareToWhatsAppBiz ? WHATAPPW4B_PACKAGE_NAME : WHATAPP_PACKAGE_NAME);
             whatsappIntent.putExtra(Intent.EXTRA_TEXT, msg);
             // if the url is the not empty then get url of the file and share
             if (!TextUtils.isEmpty(imagePath)) {
                 whatsappIntent.setType("*/*");
-                System.out.print(imagePath+"url is not empty");
+                System.out.print(imagePath + "url is not empty");
                 File file = new File(imagePath);
-                Uri fileUri = FileProvider.getUriForFile(activity, activity.getApplicationContext().getPackageName() + ".provider", file);
+                Uri fileUri = FileProvider.getUriForFile(activity,
+                        activity.getApplicationContext().getPackageName() + ".provider", file);
                 whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 whatsappIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
                 whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            }
-            else {
+            } else {
                 whatsappIntent.setType("text/plain");
             }
             try {
                 activity.startActivity(whatsappIntent);
                 result.success("true");
+                methodChannel.invokeMethod("onSuccess", "open-share");
             } catch (Exception ex) {
+                methodChannel.invokeMethod("onError", "Messenger app is not installed on your device");
                 if (openMarket) {
-                    this.openMarket("org.telegram.messenger");
-                    result.success("false: Telegram app is not installed on your device");
-                 } else {
-                    result.success("false: Telegram app is not installed on your device");
+                    this.openMarket(shareToWhatsAppBiz ? WHATAPPW4B_PACKAGE_NAME : WHATAPP_PACKAGE_NAME);
+                    result.success("false: WhatsApp app is not installed on your device");
+                } else {
+                    result.success("false: WhatsApp app is not installed on your device");
                 }
             }
         } catch (Exception var9) {
-            result.error("error", var9.toString(), "");
-        }
-    }
-    /**
-     * share to telegram
-     *
-     * @param msg                String
-     * @param result             Result
-     */
-    private void shareToTelegram(String msg, boolean openMarket, Result result) {
-        try {
-            Intent telegramIntent = new Intent(Intent.ACTION_SEND);
-            telegramIntent.setType("text/plain");
-            telegramIntent.setPackage("org.telegram.messenger");
-            telegramIntent.putExtra(Intent.EXTRA_TEXT, msg);
-            try {
-                activity.startActivity(telegramIntent);
-                result.success("true");
-            } catch (Exception ex) {
-                if (openMarket) {
-                    this.openMarket("org.telegram.messenger");
-                    result.success("false: Telegram app is not installed on your device");
-                 } else {
-                    result.success("false: Telegram app is not installed on your device");
-                }
-            }
-        } catch (Exception var9) {
-            result.error("error", var9.toString(), "");
-        }
-    }
-
-    /**
-     * share to Messenger
-     *
-     * @param msg                String
-     * @param result             Result
-     */
-    private void shareToMessenger(String msg, boolean openMarket, Result result) {
-        try {
-            Intent messengerIntent = new Intent(Intent.ACTION_SEND);
-            messengerIntent.setType("text/plain");
-            messengerIntent.setPackage("com.facebook.orca");
-            messengerIntent.putExtra(Intent.EXTRA_TEXT, msg);
-            try {
-                activity.startActivity(messengerIntent);
-                result.success("true");
-            } catch (Exception ex) {
-                if (openMarket) {
-                    this.openMarket("com.facebook.orca");
-                    result.success("false: Messenger app is not installed on your device");
-                 } else {
-                    result.success("false: Messenger app is not installed on your device");
-                }
-            }
-        } catch (Exception var9) {
-            result.error("error", var9.toString(), "");
-        }
-    }
-
-    /** 
-     * share to Messenger
-     *
-     * @param msg                String
-     * @param result             Result
-     */
-    private void shareToLine(String msg, boolean openMarket, Result result) {
-        try {
-            Intent lineIntent = new Intent(Intent.ACTION_SEND);
-            lineIntent.setType("text/plain");
-            lineIntent.setPackage("jp.naver.line.android");
-            lineIntent.putExtra(Intent.EXTRA_TEXT, msg);
-            try {
-                activity.startActivity(lineIntent);
-                result.success("true");
-            } catch (Exception ex) {
-                if (openMarket) {
-                    this.openMarket("jp.naver.line.android");
-                    result.success("false: LINE app is not installed on your device");
-                 } else {
-                    result.success("false: LINE app is not installed on your device");
-                }
-            }
-        } catch (Exception var9) {
-            result.error("error", var9.toString(), "");
-        }
-    }
-
-    /** 
-     * share to BeeBush
-     *
-     * @param url                String
-     * @param result             Result
-     */
-    private void shareToBeeBush(String url, boolean openMarket, Result result) {
-        try {
-            Intent beeBushIntent = new Intent(Intent.ACTION_SEND);
-            beeBushIntent.setType("text/plain");
-            beeBushIntent.setPackage("com.beebush");
-            beeBushIntent.putExtra(Intent.EXTRA_TEXT, url);
-            try {
-                activity.startActivity(beeBushIntent);
-                result.success("true");
-            } catch (Exception ex) {
-                if (openMarket) {
-                    this.openMarket("com.beebush");
-                    result.success("false: BeeBush app is not installed on your device");
-                 } else {
-                    result.success("false: BeeBush app is not installed on your device");
-                }
-            }
-        } catch (Exception var9) {
+            methodChannel.invokeMethod("onError", var9);
             result.error("error", var9.toString(), "");
         }
     }
@@ -479,12 +331,138 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             url = "https://api.whatsapp.com/send?phone=" + phoneNumber + "&text=" + URLEncoder.encode(msg, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            methodChannel.invokeMethod("onError", e);
         }
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setPackage("com.whatsapp");
         i.setData(Uri.parse(url));
         activity.startActivity(i);
         result.success("success");
+        methodChannel.invokeMethod("onSuccess", "open-share");
+    }
+
+    /**
+     * share to telegram
+     *
+     * @param msg    String
+     * @param result Result
+     */
+    private void shareToTelegram(String msg, boolean openMarket, Result result) {
+        try {
+            Intent telegramIntent = new Intent(Intent.ACTION_SEND);
+            telegramIntent.setType("text/plain");
+            telegramIntent.setPackage(TELEGRAM_PACKAGE_NAME);
+            telegramIntent.putExtra(Intent.EXTRA_TEXT, msg);
+            try {
+                activity.startActivity(telegramIntent);
+                result.success("true");
+                methodChannel.invokeMethod("onSuccess", "open-share");
+            } catch (Exception ex) {
+                methodChannel.invokeMethod("onError", "Messenger app is not installed on your device");
+                if (openMarket) {
+                    this.openMarket(TELEGRAM_PACKAGE_NAME);
+                    result.success("false: Telegram app is not installed on your device");
+                } else {
+                    result.success("false: Telegram app is not installed on your device");
+                }
+            }
+        } catch (Exception var9) {
+            methodChannel.invokeMethod("onError", var9);
+            result.error("error", var9.toString(), "");
+        }
+    }
+
+    /**
+     * share to Messenger
+     *
+     * @param msg    String
+     * @param result Result
+     */
+    private void shareToMessenger(String msg, boolean openMarket, Result result) {
+        try {
+            Intent messengerIntent = new Intent(Intent.ACTION_SEND);
+            messengerIntent.setType("text/plain");
+            messengerIntent.setPackage(MESSENGER_PACKAGE_NAME);
+            messengerIntent.putExtra(Intent.EXTRA_TEXT, msg);
+            try {
+                activity.startActivity(messengerIntent);
+                result.success("true");
+                methodChannel.invokeMethod("onSuccess", "open-share");
+            } catch (Exception ex) {
+                methodChannel.invokeMethod("onError", "Messenger app is not installed on your device");
+                if (openMarket) {
+                    this.openMarket(MESSENGER_PACKAGE_NAME);
+                    result.success("false: Messenger app is not installed on your device");
+                } else {
+                    result.success("false: Messenger app is not installed on your device");
+                }
+            }
+        } catch (Exception var9) {
+            methodChannel.invokeMethod("onError", var9);
+            result.error("error", var9.toString(), "");
+        }
+    }
+
+    /**
+     * share to Messenger
+     *
+     * @param msg    String
+     * @param result Result
+     */
+    private void shareToLine(String msg, boolean openMarket, Result result) {
+        try {
+            Intent lineIntent = new Intent(Intent.ACTION_SEND);
+            lineIntent.setType("text/plain");
+            lineIntent.setPackage(LINE_PACKAGE_NAME);
+            lineIntent.putExtra(Intent.EXTRA_TEXT, msg);
+            try {
+                activity.startActivity(lineIntent);
+                result.success("true");
+                methodChannel.invokeMethod("onSuccess", "open-share");
+            } catch (Exception ex) {
+                methodChannel.invokeMethod("onError", "LINE app is not installed on your device");
+                if (openMarket) {
+                    this.openMarket(LINE_PACKAGE_NAME);
+                    result.success("false: LINE app is not installed on your device");
+                } else {
+                    result.success("false: LINE app is not installed on your device");
+                }
+            }
+        } catch (Exception var9) {
+            methodChannel.invokeMethod("onError", var9);
+            result.error("error", var9.toString(), "");
+        }
+    }
+
+    /**
+     * share to BeeBush
+     *
+     * @param url    String
+     * @param result Result
+     */
+    private void shareToBeeBush(String url, boolean openMarket, Result result) {
+        try {
+            Intent beeBushIntent = new Intent(Intent.ACTION_SEND);
+            beeBushIntent.setType("text/plain");
+            beeBushIntent.setPackage(BEEBUSH_PACKAGE_NAME);
+            beeBushIntent.putExtra(Intent.EXTRA_TEXT, url);
+            try {
+                activity.startActivity(beeBushIntent);
+                result.success("true");
+                methodChannel.invokeMethod("onSuccess", "open-share");
+            } catch (Exception ex) {
+                methodChannel.invokeMethod("onError", "LINE app is not installed on your device");
+                if (openMarket) {
+                    this.openMarket(BEEBUSH_PACKAGE_NAME);
+                    result.success("false: BeeBush app is not installed on your device");
+                } else {
+                    result.success("false: BeeBush app is not installed on your device");
+                }
+            }
+        } catch (Exception var9) {
+            methodChannel.invokeMethod("onError", var9);
+            result.error("error", var9.toString(), "");
+        }
     }
 
     /**
@@ -496,7 +474,8 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
     private void shareInstagramStory(String url, boolean openMarket, Result result) {
         if (instagramInstalled()) {
             File file = new File(url);
-            Uri fileUri = FileProvider.getUriForFile(activity, activity.getApplicationContext().getPackageName() + ".provider", file);
+            Uri fileUri = FileProvider.getUriForFile(activity,
+                    activity.getApplicationContext().getPackageName() + ".provider", file);
 
             Intent instagramIntent = new Intent(Intent.ACTION_SEND);
             instagramIntent.setType("image/*");
@@ -505,42 +484,24 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             try {
                 activity.startActivity(instagramIntent);
                 result.success("Success");
+                methodChannel.invokeMethod("onSuccess", "open-share");
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
                 result.success("Failure");
             }
         } else {
+            methodChannel.invokeMethod("onError", "LINE app is not installed on your device");
             if (openMarket) {
                 this.openMarket(INSTAGRAM_PACKAGE_NAME);
                 result.error("Instagram not found", "Instagram is not installed on device.", "");
-             } else {
+            } else {
                 result.error("Instagram not found", "Instagram is not installed on device.", "");
             }
-            
+
         }
     }
 
-    @Override
-    public void onAttachedToActivity(ActivityPluginBinding binding) {
-        activity = binding.getActivity();
-    }
-
-    @Override
-    public void onDetachedFromActivityForConfigChanges() {
-
-    }
-
-    @Override
-    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
-        activity = binding.getActivity();
-    }
-
-    @Override
-    public void onDetachedFromActivity() {
-
-    }
-
-    ///Utils methods
+    /// Utils methods
     private boolean instagramInstalled() {
         try {
             if (activity != null) {
@@ -554,20 +515,11 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
-//        return false;
+        // return false;
     }
 
     /// Mở chợ khi chưa cài app
-    private void openMarket(String appId){
-         if (activity != null) {
-            try {
-                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appId)));
-            } catch (android.content.ActivityNotFoundException anfe) {
-                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appId)));
-            }
-        }
-    }
-    private void openPlayStore(String packageName) {
+    private void openMarket(String packageName) {
         try {
             final Uri playStoreUri = Uri.parse("market://details?id=" + packageName);
             final Intent intent = new Intent(Intent.ACTION_VIEW, playStoreUri);

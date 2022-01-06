@@ -29,10 +29,15 @@ class FlutterMidasShare {
   /// [phoneNumber] enter phone number with counry code
   /// For ios
   /// If include image then text params will be ingored as there is no current way in IOS share both at the same.
-  Future<String?> shareToWhatsApp(
-      {String msg = '',
-      String imagePath = '',
-      FileType? fileType = FileType.image, bool openMarket = true}) async {
+  Future<String?> shareToWhatsApp({
+    String msg = '',
+    String imagePath = '',
+    FileType? fileType = FileType.image,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('url', () => imagePath);
@@ -46,84 +51,6 @@ class FlutterMidasShare {
     String? result;
     try {
       result = await _channel.invokeMethod<String>(_methodWhatsApp, arguments);
-    } catch (e) {
-      return e.toString();
-    }
-
-    return result;
-  }
-
-  ///share to WhatsApp
-  /// [phoneNumber] phone number with counry code
-  /// [msg] message text you want on whatsapp
-  Future<String?> shareWhatsAppPersonalMessage(
-      {required String message, required String phoneNumber}) async {
-    final Map<String, dynamic> arguments = <String, dynamic>{};
-    arguments.putIfAbsent('msg', () => message);
-    arguments.putIfAbsent('phoneNumber', () => phoneNumber);
-
-    String? result;
-    try {
-      result = await _channel.invokeMethod<String>(
-          _methodWhatsAppPersonal, arguments);
-    } catch (e) {
-      return e.toString();
-    }
-
-    return result;
-  }
-
-  ///share to Telegram
-  /// [msg] message text you want on telegram
-  Future<String?> shareToTelegram(
-      {required String msg, bool openMarket = true}) async {
-    final Map<String, dynamic> arguments = <String, dynamic>{};
-    arguments.putIfAbsent('msg', () => msg);
-    arguments.putIfAbsent('openMarket', () => openMarket);
-    String? result;
-    try {
-      result =
-          await _channel.invokeMethod<String>(_methodTelegramShare, arguments);
-    } catch (e) {
-      return e.toString();
-    }
-    return result;
-  }
-
-  ///share to WhatsApp4Biz
-  ///[imagePath] is local image
-  /// For ios
-  /// If include image then text params will be ingored as there is no current way in IOS share both at the same.
-  Future<String?> shareToWhatsApp4Biz(
-      {String msg = '', String? imagePath = ''}) async {
-    final Map<String, dynamic> arguments = <String, dynamic>{};
-
-    arguments.putIfAbsent('msg', () => msg);
-    arguments.putIfAbsent('url', () => imagePath);
-    String? result;
-    try {
-      result = await _channel.invokeMethod<String>(
-          _methodWhatsAppBusiness, arguments);
-    } catch (e) {
-      return 'false';
-    }
-
-    return result;
-  }
-
-  ///share to facebook
-  Future<String?> shareToFacebook({
-    required String msg,
-    String url = '',
-    OnSuccessHandler ?onSuccess,
-    OnCancelHandler ?onCancel,
-    OnErrorHandler ?onError,
-  }) async {
-    final Map<String, dynamic> arguments = <String, dynamic>{};
-    arguments.putIfAbsent('msg', () => msg);
-    arguments.putIfAbsent('url', () => url);
-    String? result;
-    try {
       _channel.setMethodCallHandler((call) {
         switch (call.method) {
           case "onSuccess":
@@ -136,7 +63,156 @@ class FlutterMidasShare {
             throw UnsupportedError("Unknown method called");
         }
       });
+    } catch (e) {
+      return e.toString();
+    }
+
+    return result;
+  }
+
+  ///share to WhatsApp
+  /// [phoneNumber] phone number with counry code
+  /// [msg] message text you want on whatsapp
+  Future<String?> shareWhatsAppPersonalMessage({
+    required String message,
+    required String phoneNumber,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
+    final Map<String, dynamic> arguments = <String, dynamic>{};
+    arguments.putIfAbsent('msg', () => message);
+    arguments.putIfAbsent('phoneNumber', () => phoneNumber);
+    arguments.putIfAbsent('openMarket', () => openMarket);
+
+    String? result;
+    try {
+      result = await _channel.invokeMethod<String>(
+          _methodWhatsAppPersonal, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
+    } catch (e) {
+      return e.toString();
+    }
+
+    return result;
+  }
+
+  ///share to WhatsApp4Biz
+  ///[imagePath] is local image
+  /// For ios
+  /// If include image then text params will be ingored as there is no current way in IOS share both at the same.
+  Future<String?> shareToWhatsApp4Biz({
+    String msg = '',
+    String? imagePath = '',
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
+    final Map<String, dynamic> arguments = <String, dynamic>{};
+
+    arguments.putIfAbsent('msg', () => msg);
+    arguments.putIfAbsent('url', () => imagePath);
+    arguments.putIfAbsent('openMarket', () => openMarket);
+
+    String? result;
+    try {
+      result = await _channel.invokeMethod<String>(
+          _methodWhatsAppBusiness, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
+    } catch (e) {
+      return 'false';
+    }
+
+    return result;
+  }
+
+  ///share to Telegram
+  /// [msg] message text you want on telegram
+  Future<String?> shareToTelegram({
+    required String msg,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
+    final Map<String, dynamic> arguments = <String, dynamic>{};
+    arguments.putIfAbsent('msg', () => msg);
+    arguments.putIfAbsent('openMarket', () => openMarket);
+    String? result;
+    try {
+      result =
+          await _channel.invokeMethod<String>(_methodTelegramShare, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
+    } catch (e) {
+      return e.toString();
+    }
+    return result;
+  }
+
+  ///share to facebook
+  Future<String?> shareToFacebook({
+    required String msg,
+    String url = '',
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
+    final Map<String, dynamic> arguments = <String, dynamic>{};
+    arguments.putIfAbsent('msg', () => msg);
+    arguments.putIfAbsent('url', () => url);
+    arguments.putIfAbsent('openMarket', () => openMarket);
+
+    String? result;
+    try {
       result = await _channel.invokeMethod<String?>(_methodFaceBook, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
     } catch (e) {
       return e.toString();
     }
@@ -145,34 +221,48 @@ class FlutterMidasShare {
 
   ///share to twitter
   ///[msg] string that you want share.
-  Future<String?> shareToTwitter({required String msg, String url = ''}) async {
+  Future<String?> shareToTwitter({
+    required String msg,
+    String url = '',
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('url', () => url);
+    arguments.putIfAbsent('openMarket', () => openMarket);
+
     String? result;
     try {
       result = await _channel.invokeMethod(_methodTwitter, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
     } catch (e) {
       return e.toString();
     }
     return result;
   }
 
-  ///use system share ui
-  Future<String?> shareToSystem({required String msg}) async {
-    String? result;
-    try {
-      result =
-          await _channel.invokeMethod<String>(_methodSystemShare, {'msg': msg});
-    } catch (e) {
-      return 'false';
-    }
-    return result;
-  }
-
   ///share file to instagram
-  Future<String?> shareToInstagram(
-      {required String imagePath, bool openMarket = true}) async {
+  Future<String?> shareToInstagram({
+    required String imagePath,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('url', () => imagePath);
     arguments.putIfAbsent('openMarket', () => openMarket);
@@ -181,50 +271,143 @@ class FlutterMidasShare {
     try {
       result =
           await _channel.invokeMethod<String>(_methodInstagramShare, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
     } catch (e) {
       return e.toString();
     }
     return result;
   }
 
-  Future<String?> shareToMessenger(
-      {required String msg, bool openMarket = true}) async {
+  Future<String?> shareToMessenger({
+    required String msg,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('openMarket', () => openMarket);
+
     String? result;
     try {
       result = await _channel.invokeMethod(_methodMessengerShare, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
     } catch (e) {
       return e.toString();
     }
     return result;
   }
 
-  Future<String?> shareToLine(
-      {required String msg, bool openMarket = true}) async {
+  Future<String?> shareToLine({
+    required String msg,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('openMarket', () => openMarket);
     String? result;
     try {
       result = await _channel.invokeMethod(_methodLineShare, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
     } catch (e) {
       return e.toString();
     }
     return result;
   }
 
-  Future<String?> shareToBeeBush(
-      {required String url, bool openMarket = true}) async {
+  Future<String?> shareToBeeBush({
+    required String url,
+    bool openMarket = true,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('url', () => url);
     arguments.putIfAbsent('openMarket', () => openMarket);
     String? result;
     try {
       result = await _channel.invokeMethod(_methodBeeBushShare, arguments);
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
     } catch (e) {
       return e.toString();
+    }
+    return result;
+  }
+
+  ///use system share ui
+  Future<String?> shareToSystem({
+    required String msg,
+    OnSuccessHandler? onSuccess,
+    OnCancelHandler? onCancel,
+    OnErrorHandler? onError,
+  }) async {
+    String? result;
+    try {
+      result =
+          await _channel.invokeMethod<String>(_methodSystemShare, {'msg': msg});
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
+    } catch (e) {
+      return 'false';
     }
     return result;
   }

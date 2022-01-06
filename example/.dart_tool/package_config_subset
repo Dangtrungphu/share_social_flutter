@@ -1,7 +1,7 @@
 midas_share
 2.12
-file:///E:/3-Flutter_Test/share_social_flutter/
-file:///E:/3-Flutter_Test/share_social_flutter/lib/
+file:///E:/3-Flutter_Test/test_share_2/midas_share/
+file:///E:/3-Flutter_Test/test_share_2/midas_share/lib/
 async
 2.12
 file:///E:/flutter_1.20.3/.pub-cache/hosted/pub.dartlang.org/async-2.6.1/
@@ -180,6 +180,6 @@ file:///E:/flutter_1.20.3/packages/flutter_web_plugins/
 file:///E:/flutter_1.20.3/packages/flutter_web_plugins/lib/
 midas_share_example
 2.12
-file:///E:/3-Flutter_Test/share_social_flutter/example/
-file:///E:/3-Flutter_Test/share_social_flutter/example/lib/
+file:///E:/3-Flutter_Test/test_share_2/midas_share/example/
+file:///E:/3-Flutter_Test/test_share_2/midas_share/example/lib/
 2
