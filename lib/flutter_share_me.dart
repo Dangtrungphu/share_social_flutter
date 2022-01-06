@@ -5,6 +5,10 @@ import 'file_type.dart';
 //export file type enum
 export 'package:midas_share/file_type.dart';
 
+typedef Future<dynamic> OnCancelHandler();
+typedef Future<dynamic> OnErrorHandler(dynamic error);
+typedef Future<dynamic> OnSuccessHandler(dynamic postId);
+
 class FlutterMidasShare {
   final MethodChannel _channel = const MethodChannel('midas_share');
 
@@ -70,7 +74,8 @@ class FlutterMidasShare {
 
   ///share to Telegram
   /// [msg] message text you want on telegram
-  Future<String?> shareToTelegram({required String msg, bool openMarket = true}) async {
+  Future<String?> shareToTelegram(
+      {required String msg, bool openMarket = true}) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('openMarket', () => openMarket);
@@ -106,17 +111,32 @@ class FlutterMidasShare {
   }
 
   ///share to facebook
-  Future<String?> shareToFacebook(
-      {required String msg, String url = ''}) async {
+  Future<String?> shareToFacebook({
+    required String msg,
+    String url = '',
+    OnSuccessHandler ?onSuccess,
+    OnCancelHandler ?onCancel,
+    OnErrorHandler ?onError,
+  }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('url', () => url);
     String? result;
     try {
+      _channel.setMethodCallHandler((call) {
+        switch (call.method) {
+          case "onSuccess":
+            return onSuccess!(call.arguments);
+          case "onCancel":
+            return onCancel!();
+          case "onError":
+            return onError!(call.arguments);
+          default:
+            throw UnsupportedError("Unknown method called");
+        }
+      });
       result = await _channel.invokeMethod<String?>(_methodFaceBook, arguments);
     } catch (e) {
-      print('xxxxxxxxxxxxxxxxxx');
-      print(e);
       return e.toString();
     }
     return result;
@@ -166,7 +186,8 @@ class FlutterMidasShare {
     return result;
   }
 
-  Future<String?> shareToMessenger({required String msg, bool openMarket = true}) async {
+  Future<String?> shareToMessenger(
+      {required String msg, bool openMarket = true}) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('openMarket', () => openMarket);
@@ -179,7 +200,8 @@ class FlutterMidasShare {
     return result;
   }
 
-  Future<String?> shareToLine({required String msg, bool openMarket = true}) async {
+  Future<String?> shareToLine(
+      {required String msg, bool openMarket = true}) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('openMarket', () => openMarket);
@@ -192,7 +214,8 @@ class FlutterMidasShare {
     return result;
   }
 
-  Future<String?> shareToBeeBush({required String url, bool openMarket = true}) async {
+  Future<String?> shareToBeeBush(
+      {required String url, bool openMarket = true}) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('url', () => url);
     arguments.putIfAbsent('openMarket', () => openMarket);

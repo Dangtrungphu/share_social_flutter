@@ -53,6 +53,9 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
     final private static String _methodLineShare = "line_share";
     final private static String _methodBeeBushShare = "beebush_share";
 
+    private final static String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
+    private final static String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
+    private final static String TWITTER_PACKAGE_NAME = "com.twitter.android";
 
     private Activity activity;
     private static CallbackManager callbackManager;
@@ -95,11 +98,20 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
     public void onMethodCall(MethodCall call, @NonNull Result result) {
         String url, msg;
         boolean openMarket;
+        final PackageManager pm = activity.getPackageManager();
         switch (call.method) {
             case _methodFaceBook:
-                url = call.argument("url");
-                msg = call.argument("msg");
-                shareToFacebook(msg, url, result);
+                // url = call.argument("url");
+                // msg = call.argument("msg");
+                // shareToFacebook(msg, url, result);
+                try {
+                    pm.getPackageInfo(FACEBOOK_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
+                    facebookShare(call.<String>argument("caption"), call.<String>argument("path"));
+                    result.success(true);
+                } catch (PackageManager.NameNotFoundException e) {
+                    openPlayStore(FACEBOOK_PACKAGE_NAME);
+                    result.success(false);
+                }
                 break;
             case _methodTwitter:
                 url = call.argument("url");
@@ -204,43 +216,102 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
      * @param msg    String
      * @param result Result
      */
-    private void shareToFacebook(String msg, String url, Result result) {
-        try {
+    // private void shareToFacebook(String msg, String url, Result result) {
+    //     try {
             
-            final Uri uri = Uri.parse(url);
-            final ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri).setQuote(msg).build();
-            final ShareDialog shareDialog = new ShareDialog(activity);
-            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-                @Override
-                public void onSuccess(Sharer.Result result) {
-                    methodChannel.invokeMethod("onSuccess", null);
-                    Log.d("SocialSharePlugin", "Sharing successfully done.");
-                }
+    //         final Uri uri = Uri.parse(url);
+    //         final ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri).setQuote(msg).build();
+    //         final ShareDialog shareDialog = new ShareDialog(activity);
+    //         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+    //             @Override
+    //             public void onSuccess(Sharer.Result result) {
+    //                 methodChannel.invokeMethod("onSuccess", null);
+    //                 Log.d("SocialSharePlugin", "Sharing successfully done.");
+    //             }
     
-                @Override
-                public void onCancel() {
-                    methodChannel.invokeMethod("onCancel", null);
-                    Log.d("SocialSharePlugin", "Sharing cancelled.");
-                }
+    //             @Override
+    //             public void onCancel() {
+    //                 methodChannel.invokeMethod("onCancel", null);
+    //                 Log.d("SocialSharePlugin", "Sharing cancelled.");
+    //             }
     
-                @Override
-                public void onError(FacebookException error) {
-                    methodChannel.invokeMethod("onError", error.getMessage());
-                    Log.d("SocialSharePlugin", "Sharing error occurred.");
-                }
-            });
+    //             @Override
+    //             public void onError(FacebookException error) {
+    //                 methodChannel.invokeMethod("onError", error.getMessage());
+    //                 Log.d("SocialSharePlugin", "Sharing error occurred.");
+    //             }
+    //         });
     
-            if (ShareDialog.canShow(ShareLinkContent.class)) {
-                shareDialog.show(content);
-                result.success("success");
-            }
-        } catch (Exception e) {
-            System.out.println("---------------onError");
-            System.out.println(e);
-        }
+    //         if (ShareDialog.canShow(ShareLinkContent.class)) {
+    //             shareDialog.show(content);
+    //             result.success("success");
+    //         }
+    //     } catch (Exception e) {
+    //         System.out.println("---------------onError");
+    //         System.out.println(e);
+    //     }
 
+    // }
+    private void facebookShare(String caption, String mediaPath) {
+        final File media = new File(mediaPath);
+        final Uri uri = FileProvider.getUriForFile(activity, activity.getPackageName() + ".social.share.fileprovider",
+                media);
+        final SharePhoto photo = new SharePhoto.Builder().setImageUrl(uri).setCaption(caption).build();
+        final SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo).build();
+        final ShareDialog shareDialog = new ShareDialog(activity);
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                channel.invokeMethod("onSuccess", null);
+                Log.d("SocialSharePlugin", "Sharing successfully done.");
+            }
+
+            @Override
+            public void onCancel() {
+                channel.invokeMethod("onCancel", null);
+                Log.d("SocialSharePlugin", "Sharing cancelled.");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                channel.invokeMethod("onError", error.getMessage());
+                Log.d("SocialSharePlugin", "Sharing error occurred.");
+            }
+        });
+
+        if (ShareDialog.canShow(SharePhotoContent.class)) {
+            shareDialog.show(content);
+        }
     }
 
+    private void facebookShareLink(String quote, String url) {
+        final Uri uri = Uri.parse(url);
+        final ShareLinkContent content = new ShareLinkContent.Builder().setContentUrl(uri).setQuote(quote).build();
+        final ShareDialog shareDialog = new ShareDialog(activity);
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                channel.invokeMethod("onSuccess", null);
+                Log.d("SocialSharePlugin", "Sharing successfully done.");
+            }
+
+            @Override
+            public void onCancel() {
+                channel.invokeMethod("onCancel", null);
+                Log.d("SocialSharePlugin", "Sharing cancelled.");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                channel.invokeMethod("onError", error.getMessage());
+                Log.d("SocialSharePlugin", "Sharing error occurred.");
+            }
+        });
+
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            shareDialog.show(content);
+        }
+    }
     /**
      * share to whatsapp
      *
@@ -420,7 +491,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             Intent instagramIntent = new Intent(Intent.ACTION_SEND);
             instagramIntent.setType("image/*");
             instagramIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
-            instagramIntent.setPackage("com.instagram.android");
+            instagramIntent.setPackage(INSTAGRAM_PACKAGE_NAME);
             try {
                 activity.startActivity(instagramIntent);
                 result.success("Success");
@@ -430,7 +501,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             }
         } else {
             if (openMarket) {
-                this.openMarket("com.instagram.android");
+                this.openMarket(INSTAGRAM_PACKAGE_NAME);
                 result.error("Instagram not found", "Instagram is not installed on device.", "");
              } else {
                 result.error("Instagram not found", "Instagram is not installed on device.", "");
@@ -464,7 +535,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
         try {
             if (activity != null) {
                 activity.getPackageManager()
-                        .getApplicationInfo("com.instagram.android", 0);
+                        .getApplicationInfo(INSTAGRAM_PACKAGE_NAME, 0);
                 return true;
             } else {
                 Log.d("App", "Instagram app is not installed on your device");
@@ -484,6 +555,17 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             } catch (android.content.ActivityNotFoundException anfe) {
                 activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appId)));
             }
+        }
+    }
+    private void openPlayStore(String packageName) {
+        try {
+            final Uri playStoreUri = Uri.parse("market://details?id=" + packageName);
+            final Intent intent = new Intent(Intent.ACTION_VIEW, playStoreUri);
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            final Uri playStoreUri = Uri.parse("https://play.google.com/store/apps/details?id=" + packageName);
+            final Intent intent = new Intent(Intent.ACTION_VIEW, playStoreUri);
+            activity.startActivity(intent);
         }
     }
 }
