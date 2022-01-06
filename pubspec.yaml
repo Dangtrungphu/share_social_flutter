@@ -28,7 +28,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: zhuoyuan.li.fluttershareme
-        pluginClass: FlutterShareMePlugin
+        package: com.social_share_flutter
+        pluginClass: FlutterShareSocialPlugin
       ios:
-        pluginClass: SwiftFlutterShareMePlugin
+        pluginClass: SwiftFlutterShareSocialPlugin

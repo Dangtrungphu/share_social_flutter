@@ -1,11 +1,11 @@
-#import "FlutterShareMePlugin.h"
+#import "FlutterShareSocialPlugin.h"
 
-@implementation FlutterShareMePlugin
+@implementation FlutterShareSocialPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"share_social_flutter"
             binaryMessenger:[registrar messenger]];
-  FlutterShareMePlugin* instance = [[FlutterShareMePlugin alloc] init];
+  FlutterShareSocialPlugin* instance = [[FlutterShareSocialPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 

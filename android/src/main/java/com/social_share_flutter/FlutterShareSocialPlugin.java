@@ -1,4 +1,4 @@
-package zhuoyuan.li.fluttershareme;
+package com.social_share_flutter;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

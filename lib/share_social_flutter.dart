@@ -9,7 +9,7 @@ typedef Future<dynamic> OnCancelHandler();
 typedef Future<dynamic> OnErrorHandler(dynamic error);
 typedef Future<dynamic> OnSuccessHandler(dynamic postId);
 
-class FlutterMidasShare {
+class FlutterShareSocial {
   final MethodChannel _channel = const MethodChannel('share_social_flutter');
 
   static const String _methodWhatsApp = 'whatsapp_share';

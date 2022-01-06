@@ -16,8 +16,8 @@
 @import path_provider;
 #endif
 
-#if __has_include(<share_social_flutter/SwiftFlutterShareMePlugin.h>)
-#import <share_social_flutter/SwiftFlutterShareMePlugin.h>
+#if __has_include(<share_social_flutter/SwiftFlutterShareSocialPlugin.h>)
+#import <share_social_flutter/SwiftFlutterShareSocialPlugin.h>
 #else
 @import share_social_flutter;
 #endif
@@ -27,7 +27,7 @@
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
-  [SwiftFlutterShareMePlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterShareMePlugin"]];
+  [SwiftFlutterShareSocialPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterShareSocialPlugin"]];
 }
 
 @end

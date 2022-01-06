@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import FBSDKShareKit
 import PhotosUI
-public class SwiftFlutterShareMePlugin: NSObject, FlutterPlugin, SharingDelegate {
+public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDelegate {
     
     
     let _methodWhatsApp = "whatsapp_share";
@@ -20,7 +20,7 @@ public class SwiftFlutterShareMePlugin: NSObject, FlutterPlugin, SharingDelegate
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "share_social_flutter", binaryMessenger: registrar.messenger())
-        let instance = SwiftFlutterShareMePlugin()
+        let instance = SwiftFlutterShareSocialPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     

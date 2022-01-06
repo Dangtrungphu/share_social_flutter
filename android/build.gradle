@@ -1,4 +1,4 @@
-group 'zhuoyuan.li.fluttershareme'
+group 'com.social_share_flutter'
 version '1.0-SNAPSHOT'
 
 buildscript {

@@ -1,4 +1,4 @@
-package zhuoyuan.li.fluttershareme.util;
+package com.social_share_flutter.util;
 
 import androidx.core.content.FileProvider;
 
