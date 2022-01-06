@@ -339,7 +339,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
                 whatsappIntent.setType("text/plain");
             }
             try {
-                activity.startActivity(telegramIntent);
+                activity.startActivity(whatsappIntent);
                 result.success("true");
             } catch (Exception ex) {
                 if (openMarket) {
