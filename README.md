@@ -1,6 +1,6 @@
-# midas_share
+# share_social_flutter
 
-[![pub package](https://img.shields.io/pub/v/midas_share.svg)](https://pub.dartlang.org/packages/midas_share)
+[![pub package](https://img.shields.io/pub/v/share_social_flutter.svg)](https://pub.dartlang.org/packages/share_social_flutter)
 [![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
 
 Flutter Plugin for sharing contents to social media.
@@ -16,15 +16,15 @@ Feedback and Pull Requests are most welcome!**
 
 ## Getting Started
 
-add `midas_share` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
+add `share_social_flutter` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 Please check the latest version before installation.
 ```
 dependencies:
   flutter:
     sdk: flutter
-  # add midas_share
-  midas_share: ^0.11.0
+  # add share_social_flutter
+  share_social_flutter: ^0.11.0
 ```
 ## Setup 
 
@@ -127,7 +127,7 @@ Make sure you add whatsapp in plist.
 #### Add the following imports to your Dart code:
 
 ```
-import 'package:midas_share/midas_share.dart';
+import 'package:share_social_flutter/share_social_flutter.dart';
 ```
 
 
@@ -194,6 +194,6 @@ These methods will return "success" if they successfully jump to the correspondi
 ```
 
 
-### Checkout the full example [here](https://github.com/OpenFlutter/midas_share/blob/master/example/lib/main.dart) 
+### Checkout the full example [here](https://github.com/OpenFlutter/share_social_flutter/blob/master/example/lib/main.dart) 
 
 

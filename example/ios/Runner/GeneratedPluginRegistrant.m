@@ -10,24 +10,24 @@
 @import image_picker;
 #endif
 
-#if __has_include(<midas_share/SwiftFlutterShareMePlugin.h>)
-#import <midas_share/SwiftFlutterShareMePlugin.h>
-#else
-@import midas_share;
-#endif
-
 #if __has_include(<path_provider/FLTPathProviderPlugin.h>)
 #import <path_provider/FLTPathProviderPlugin.h>
 #else
 @import path_provider;
 #endif
 
+#if __has_include(<share_social_flutter/SwiftFlutterShareMePlugin.h>)
+#import <share_social_flutter/SwiftFlutterShareMePlugin.h>
+#else
+@import share_social_flutter;
+#endif
+
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
-  [SwiftFlutterShareMePlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterShareMePlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
+  [SwiftFlutterShareMePlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterShareMePlugin"]];
 }
 
 @end

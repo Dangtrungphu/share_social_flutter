@@ -1,5 +1,5 @@
-name: midas_share_example
-description: Demonstrates how to use the midas_share plugin.
+name: share_social_flutter_example
+description: Demonstrates how to use the share_social_flutter plugin.
 publish_to: 'none'
 version: 1.0.0+100
 
@@ -12,7 +12,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  midas_share:
+  share_social_flutter:
     path: ../
   image_picker: ^0.8.3+2
   path_provider: ^2.0.2

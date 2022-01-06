@@ -88,7 +88,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
     }
 
     private void onAttachedToEngine(BinaryMessenger messenger) {
-        methodChannel = new MethodChannel(messenger, "midas_share");
+        methodChannel = new MethodChannel(messenger, "share_social_flutter");
         methodChannel.setMethodCallHandler(this);
         callbackManager = CallbackManager.Factory.create();
     }

@@ -19,7 +19,7 @@ public class SwiftFlutterShareMePlugin: NSObject, FlutterPlugin, SharingDelegate
     
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "midas_share", binaryMessenger: registrar.messenger())
+        let channel = FlutterMethodChannel(name: "share_social_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftFlutterShareMePlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }

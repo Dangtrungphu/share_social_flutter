@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="zhuoyuan.li.midas_share_example">
+    package="zhuoyuan.li.share_social_flutter_example">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
@@ -21,7 +21,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
-        android:label="midas_share_example"
+        android:label="share_social_flutter_example"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name="zhuoyuan.li.fluttersharemeexample.MainActivity"

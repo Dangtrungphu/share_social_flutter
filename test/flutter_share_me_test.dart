@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:midas_share/midas_share.dart';
+import 'package:share_social_flutter/share_social_flutter.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('midas_share');
+  const MethodChannel channel = MethodChannel('share_social_flutter');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

@@ -3,7 +3,7 @@
 @implementation FlutterShareMePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"midas_share"
+      methodChannelWithName:@"share_social_flutter"
             binaryMessenger:[registrar messenger]];
   FlutterShareMePlugin* instance = [[FlutterShareMePlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];

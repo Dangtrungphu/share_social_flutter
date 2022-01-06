@@ -1,7 +1,7 @@
-name: midas_share
+name: share_social_flutter
 description: Flutter Plugin for sharing contents to social media.You can use it share to Facebook , WhatsApp , Twitter And System Share UI. Support Url and Text.
 version: 1.0.1
-homepage: https://github.com/OpenFlutter/midas_share
+homepage: https://github.com/OpenFlutter/share_social_flutter
 publish_to: http://pub.dev
 
 environment:

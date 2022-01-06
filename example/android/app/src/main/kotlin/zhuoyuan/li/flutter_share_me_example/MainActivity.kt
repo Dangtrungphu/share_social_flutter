@@ -1,4 +1,4 @@
-package zhuoyuan.li.midas_share_example
+package zhuoyuan.li.share_social_flutter_example
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -2,7 +2,7 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'midas_share'
+  s.name             = 'share_social_flutter'
   s.version          = '0.0.1'
   s.summary          = 'Flutter Plugin for sharing contents to social media.'
   s.description      = <<-DESC

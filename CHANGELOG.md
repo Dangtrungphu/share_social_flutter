@@ -5,7 +5,7 @@
 - fix #54 android share whatsapp failed(only text)
 
 # 1.1.3
-- fix #48 Update midas_share.podspec	
+- fix #48 Update share_social_flutter.podspec	
 
 # 1.1.2
 - change example demo

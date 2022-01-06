@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
 FLUTTER_ROOT=E:\flutter_1.20.3
-FLUTTER_APPLICATION_PATH=E:\3-Flutter_Test\test_share_2\midas_share-1.2.0\example
+FLUTTER_APPLICATION_PATH=E:\3-Flutter_Test\test_share_2\share_social_flutter-1.2.0\example
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib\main.dart
 FLUTTER_BUILD_DIR=build

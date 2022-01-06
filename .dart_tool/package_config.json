@@ -134,13 +134,13 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "midas_share",
+      "name": "share_social_flutter",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-01-06T03:24:58.994640Z",
+  "generated": "2022-01-06T03:26:52.466713Z",
   "generator": "pub",
   "generatorVersion": "2.13.4"
 }

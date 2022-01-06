@@ -1,6 +1,6 @@
-# midas_share_example
+# share_social_flutter_example
 
-Demonstrates how to use the midas_share plugin.
+Demonstrates how to use the share_social_flutter plugin.
 
 ## Getting Started
 

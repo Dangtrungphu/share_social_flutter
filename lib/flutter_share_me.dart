@@ -3,14 +3,14 @@ import 'package:flutter/services.dart';
 import 'file_type.dart';
 
 //export file type enum
-export 'package:midas_share/file_type.dart';
+export 'package:share_social_flutter/file_type.dart';
 
 typedef Future<dynamic> OnCancelHandler();
 typedef Future<dynamic> OnErrorHandler(dynamic error);
 typedef Future<dynamic> OnSuccessHandler(dynamic postId);
 
 class FlutterMidasShare {
-  final MethodChannel _channel = const MethodChannel('midas_share');
+  final MethodChannel _channel = const MethodChannel('share_social_flutter');
 
   static const String _methodWhatsApp = 'whatsapp_share';
   static const String _methodWhatsAppPersonal = 'whatsapp_personal';

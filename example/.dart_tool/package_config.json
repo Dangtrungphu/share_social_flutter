@@ -140,12 +140,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "midas_share",
-      "rootUri": "../../",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "path",
       "rootUri": "file:///E:/flutter_1.20.3/.pub-cache/hosted/pub.dartlang.org/path-1.8.0",
       "packageUri": "lib/",
@@ -202,6 +196,12 @@
     {
       "name": "process",
       "rootUri": "file:///E:/flutter_1.20.3/.pub-cache/hosted/pub.dartlang.org/process-4.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "share_social_flutter",
+      "rootUri": "../../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -272,13 +272,13 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "midas_share_example",
+      "name": "share_social_flutter_example",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-01-06T03:24:59.605977Z",
+  "generated": "2022-01-06T03:26:53.211189Z",
   "generator": "pub",
   "generatorVersion": "2.13.4"
 }

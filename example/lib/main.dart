@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:midas_share/midas_share.dart';
+import 'package:share_social_flutter/share_social_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 ///sharing platform
@@ -100,8 +100,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> onButtonTap(Share share) async {
     String msg =
-        'Flutter share is great!!\n Check out full example at https://pub.dev/packages/midas_share';
-    String url = 'https://pub.dev/packages/midas_share';
+        'Flutter share is great!!\n Check out full example at https://pub.dev/packages/share_social_flutter';
+    String url = 'https://pub.dev/packages/share_social_flutter';
 
     String? response;
     final FlutterShareMe flutterShareMe = FlutterShareMe();
