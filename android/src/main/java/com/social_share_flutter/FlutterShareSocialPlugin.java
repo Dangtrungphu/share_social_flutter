@@ -36,9 +36,9 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
- * FlutterShareMePlugin
+ * FlutterShareSocialPlugin
  */
-public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
+public class FlutterShareSocialPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
 
     final private static String _methodWhatsApp = "whatsapp_share";
     final private static String _methodWhatsAppPersonal = "whatsapp_personal";
@@ -70,7 +70,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
-        final FlutterShareMePlugin instance = new FlutterShareMePlugin();
+        final FlutterShareSocialPlugin instance = new FlutterShareSocialPlugin();
         instance.onAttachedToEngine(registrar.messenger());
         instance.activity = registrar.activity();
     }
