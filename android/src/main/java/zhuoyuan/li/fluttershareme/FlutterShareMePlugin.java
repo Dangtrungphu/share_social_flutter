@@ -338,8 +338,17 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             else {
                 whatsappIntent.setType("text/plain");
             }
-            activity.startActivity(whatsappIntent);
-            result.success("success");
+            try {
+                activity.startActivity(telegramIntent);
+                result.success("true");
+            } catch (Exception ex) {
+                if (openMarket) {
+                    this.openMarket("org.telegram.messenger");
+                    result.success("false: Telegram app is not installed on your device");
+                 } else {
+                    result.success("false: Telegram app is not installed on your device");
+                }
+            }
         } catch (Exception var9) {
             result.error("error", var9.toString(), "");
         }
