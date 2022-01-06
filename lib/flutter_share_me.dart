@@ -32,10 +32,11 @@ class FlutterMidasShare {
   Future<String?> shareToWhatsApp(
       {String msg = '',
       String imagePath = '',
-      FileType? fileType = FileType.image}) async {
+      FileType? fileType = FileType.image, bool openMarket = true}) async {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('msg', () => msg);
     arguments.putIfAbsent('url', () => imagePath);
+    arguments.putIfAbsent('openMarket', () => openMarket);
     if (fileType == FileType.image) {
       arguments.putIfAbsent('fileType', () => 'image');
     } else {

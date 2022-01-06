@@ -121,7 +121,8 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
             case _methodWhatsApp:
                 msg = call.argument("msg");
                 url = call.argument("url");
-                shareWhatsApp(url, msg, result, false);
+                openMarket = call.argument("openMarket");
+                shareWhatsApp(url, msg, result, false, openMarket);
                 break;
             case _methodWhatsAppBusiness:
                 msg = call.argument("msg");
@@ -319,7 +320,7 @@ public class FlutterShareMePlugin implements MethodCallHandler, FlutterPlugin, A
      * @param result             Result
      * @param shareToWhatsAppBiz boolean
      */
-    private void shareWhatsApp(String imagePath, String msg, Result result, boolean shareToWhatsAppBiz) {
+    private void shareWhatsApp(String imagePath, String msg, Result result, boolean shareToWhatsAppBiz, boolean openMarket) {
         try {
             Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
             
