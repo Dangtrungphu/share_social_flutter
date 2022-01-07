@@ -13,6 +13,20 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     let _methodInstagram = "instagram_share";
     let _methodSystemShare = "system_share";
     let _methodTelegramShare = "telegram_share";
+    let _methodMessengerShare = "messenger_share";
+    let _methodLineShare = "line_share";
+    let _methodBeeBushShare = "beebush_share";
+
+
+    let id_whatsapp = "whatsapp-messenger/id310633997"
+    let id_whatsapp_business = "whatsapp-business/id1386412985"
+    let id_facebook = "facebook/id284882215"
+    let id_twitter = "twitter/id333903271"
+    let id_instagram = "instagram/id389801252"
+    let id_telegram = "telegram-messenger/id686449807"
+    let id_messenger = "messenger/id454638411"
+    let id_line = "line/id443904275"
+    let id_beebush = "bee-bush/id1450471409"
     
     var result: FlutterResult?
     var documentInteractionController: UIDocumentInteractionController?
@@ -73,6 +87,18 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         else if(call.method.elementsEqual(_methodTelegramShare)){
             let args = call.arguments as? Dictionary<String,Any>
             shareToTelegram(message: args!["msg"] as! String, result: result )
+        }
+        else if(call.method.elementsEqual(_methodMessengerShare)){
+            let args = call.arguments as? Dictionary<String,Any>
+            shareMessenger(message: args!, result: result)
+        }
+        else if(call.method.elementsEqual(_methodLineShare)){
+            let args = call.arguments as? Dictionary<String,Any>
+            shareToLine(message: args!["msg"] as! String, result: result )
+        }
+        else if(call.method.elementsEqual(_methodBeeBushShare)){
+            let args = call.arguments as? Dictionary<String,Any>
+            shareToBeeBush(url: args!["url"] as! String, result: result )
         }
         else{
             let args = call.arguments as? Dictionary<String,Any>
@@ -141,6 +167,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         }
         else
         {
+            openMarket(id: id_whatsapp)
             result(FlutterError(code: "Not found", message: "WhatsApp is not found", details: "WhatsApp not intalled or Check url scheme."));
         }
     }
@@ -160,6 +187,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
             UIApplication.shared.openURL(whatsAppURL! as URL)
             result("Sucess");
         }else{
+            openMarket(id: id_whatsapp)
             result(FlutterError(code: "Not found", message: "WhatsApp is not found", details: "WhatsApp not intalled or Check url scheme."));
         }
     }
@@ -177,6 +205,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         }
         else
         {
+            openMarket(id: id_whatsapp_business)
             result(FlutterError(code: "Not found", message: "WhatsAppBusiness is not found", details: "WhatsAppBusiness not intalled or Check url scheme."));
         }
     }
@@ -186,13 +215,35 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     
     func sharefacebook(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
         let viewController = UIApplication.shared.delegate?.window??.rootViewController
-        let shareDialog=ShareDialog()
+        //let shareDialog = ShareDialog()
         let shareContent = ShareLinkContent()
         shareContent.contentURL = URL.init(string: message["url"] as! String)!
         shareContent.quote = message["msg"] as? String
+        
+        let shareDialog = ShareDialog(viewController: viewController, content: shareContent, delegate: self)
         shareDialog.mode = .automatic
-        ShareDialog(fromViewController: viewController, content: shareContent, delegate: self).show()
+        shareDialog.show()
         result("Sucess")
+        
+    }
+
+    // Share Messenger
+    func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
+        let shareContent = ShareLinkContent()
+        // shareContent.contentURL = URL.init(string: message["url"] as! String)!
+        guard let url = URL(string: message["url"] as! String) else {
+            preconditionFailure("URL is invalid")
+        }
+
+        shareContent.contentURL = url
+        shareContent.quote = message["msg"] as? String
+        
+        let shareDialog = MessageDialog(content: shareContent, delegate: self)
+        shareDialog.show()
+        result("Sucess")
+
+
+       
         
     }
     
@@ -217,6 +268,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
                 UIApplication.shared.openURL(urlschme!)
                 result("Sucess")
             }else{
+                openMarket(id: id_twitter)
                 result(FlutterError(code: "Not found", message: "Twitter is not found", details: "Twitter not intalled or Check url scheme."));
                 
             }
@@ -238,7 +290,46 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         }
         else
         {
+            openMarket(id: id_telegram)
             result(FlutterError(code: "Not found", message: "telegram is not found", details: "telegram not intalled or Check url scheme."));
+        }
+    
+    }
+
+    func shareToLine(message: String,result: @escaping FlutterResult )
+    {
+        let telegram = "line://msg?text=\(message)"
+        var characterSet = CharacterSet.urlQueryAllowed
+        characterSet.insert(charactersIn: "?&")
+        let telegramURL  = NSURL(string: telegram.addingPercentEncoding(withAllowedCharacters: characterSet)!)
+        if UIApplication.shared.canOpenURL(telegramURL! as URL)
+        {
+            result("Sucess");
+            UIApplication.shared.openURL(telegramURL! as URL)
+        }
+        else
+        {
+            openMarket(id: id_line)
+            result(FlutterError(code: "Not found", message: "LINE is not found", details: "LINE not intalled or Check url scheme."));
+        }
+    
+    }
+
+    func shareToBeeBush(url: String,result: @escaping FlutterResult )
+    {
+        let telegram = "beebush://msg?text=\(url)"
+        var characterSet = CharacterSet.urlQueryAllowed
+        characterSet.insert(charactersIn: "?&")
+        let telegramURL  = NSURL(string: telegram.addingPercentEncoding(withAllowedCharacters: characterSet)!)
+        if UIApplication.shared.canOpenURL(telegramURL! as URL)
+        {
+            result("Sucess");
+            UIApplication.shared.openURL(telegramURL! as URL)
+        }
+        else
+        {
+            openMarket(id: id_beebush)
+            result(FlutterError(code: "Not found", message: "BeeBush is not found", details: "BeeBush not intalled or Check url scheme."));
         }
     
     }
@@ -279,6 +370,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         }
         guard let instagramURL = NSURL(string: "instagram://app") else {
             if let result = result {
+                self.openMarket(id: self.id_instagram)
                 self.result?("Instagram app is not installed on your device")
                 result(false)
             }
@@ -305,12 +397,26 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
                         self.result?("Success")
                     }
                 } else{
+                    self.openMarket(id: self.id_instagram)
                     self.result?("Instagram app is not installed on your device")
                 }
             }
         
         } catch {
             print("Fail")
+        }
+    }
+
+    // Mở sotre khi app chưa được cài
+    public func openMarket(id:String){
+        // let url = URL(string: "itms-apps://apple.com/app/" + id)
+        // UIApplication.shared.open(url)
+         let urlStr = "itms-apps://itunes.apple.com/app/\(id)?mt=8"
+        if #available(iOS 10.0, *) {
+            UIApplication.shared.open(URL(string: urlStr)!, options: [:], completionHandler: nil)
+            
+        } else {
+            UIApplication.shared.openURL(URL(string: urlStr)!)
         }
     }
     
