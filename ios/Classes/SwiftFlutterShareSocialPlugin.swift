@@ -90,7 +90,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         }
         else if(call.method.elementsEqual(_methodMessengerShare)){
             let args = call.arguments as? Dictionary<String,Any>
-            shareMessenger(message: args!["msg"] as! String, url: args!["url"] as! String,, result: result)
+            shareMessenger(message: args!["msg"] as! String, url: args!["url"] as! String, result: result)
         }
         else if(call.method.elementsEqual(_methodLineShare)){
             let args = call.arguments as? Dictionary<String,Any>
