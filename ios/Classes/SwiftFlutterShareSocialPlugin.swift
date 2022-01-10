@@ -228,25 +228,51 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     }
 
     // Share Messenger
-    func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
-        let shareContent = ShareLinkContent()
-        // shareContent.contentURL = URL.init(string: message["url"] as! String)!
-        guard let url = URL(string: message["url"] as! String) else {
-            preconditionFailure("URL is invalid")
-        }
+    // func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
+    //     let shareContent = ShareLinkContent()
+    //     // shareContent.contentURL = URL.init(string: message["url"] as! String)!
+    //     guard let url = URL(string: message["url"] as! String) else {
+    //         preconditionFailure("URL is invalid")
+    //     }
 
-        shareContent.contentURL = url
-        shareContent.quote = message["msg"] as? String
+    //     shareContent.contentURL = url
+    //     shareContent.quote = message["msg"] as? String
         
-        let shareDialog = MessageDialog(content: shareContent, delegate: self)
-        shareDialog.show()
-        result("Sucess")
+    //     let shareDialog = MessageDialog(content: shareContent, delegate: self)
+    //     shareDialog.show()
+    //     result("Sucess")
 
 
        
         
+    // }
+    func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
+        let urlstring = message["url"] as! String
+        let quote = message["msg"] as! String
+        let twitterUrl =  "fb-messenger-share-api://share?quote=\(quote)"
+        
+        let urlTextEscaped = urlstring.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+        let url = URL(string: urlTextEscaped ?? "")
+        
+        let urlWithLink = twitterUrl + url!.absoluteString
+        
+        let escapedShareString = urlWithLink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+        // cast to an url
+        let urlschme = URL(string: escapedShareString)
+        // open in safari
+        do {
+            if UIApplication.shared.canOpenURL(urlschme! as URL){
+                UIApplication.shared.openURL(urlschme!)
+                result("Sucess")
+            }else{
+                openMarket(id: id_messenger)
+                result(FlutterError(code: "Not found", message: "Messenger is not found", details: "Twitter not intalled or Check url scheme."));
+                
+            }
+        }
+        
     }
-    
+
     // share twitter params
     // @ message
     // @ url
@@ -298,14 +324,14 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
 
     func shareToLine(message: String,result: @escaping FlutterResult )
     {
-        let telegram = "line://msg?text=\(message)"
+        let line = "line://msg?text=\(message)"
         var characterSet = CharacterSet.urlQueryAllowed
         characterSet.insert(charactersIn: "?&")
-        let telegramURL  = NSURL(string: telegram.addingPercentEncoding(withAllowedCharacters: characterSet)!)
-        if UIApplication.shared.canOpenURL(telegramURL! as URL)
+        let lineURL  = NSURL(string: line.addingPercentEncoding(withAllowedCharacters: characterSet)!)
+        if UIApplication.shared.canOpenURL(lineURL! as URL)
         {
             result("Sucess");
-            UIApplication.shared.openURL(telegramURL! as URL)
+            UIApplication.shared.openURL(lineURL! as URL)
         }
         else
         {
@@ -317,14 +343,14 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
 
     func shareToBeeBush(url: String,result: @escaping FlutterResult )
     {
-        let telegram = "beebush://msg?text=\(url)"
+        let beebush = "beebush://msg?text=\(url)"
         var characterSet = CharacterSet.urlQueryAllowed
         characterSet.insert(charactersIn: "?&")
-        let telegramURL  = NSURL(string: telegram.addingPercentEncoding(withAllowedCharacters: characterSet)!)
-        if UIApplication.shared.canOpenURL(telegramURL! as URL)
+        let beebushURL  = NSURL(string: beebush.addingPercentEncoding(withAllowedCharacters: characterSet)!)
+        if UIApplication.shared.canOpenURL(beebushURL! as URL)
         {
             result("Sucess");
-            UIApplication.shared.openURL(telegramURL! as URL)
+            UIApplication.shared.openURL(beebushURL! as URL)
         }
         else
         {
@@ -406,6 +432,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
             print("Fail")
         }
     }
+
 
     // Mở sotre khi app chưa được cài
     public func openMarket(id:String){

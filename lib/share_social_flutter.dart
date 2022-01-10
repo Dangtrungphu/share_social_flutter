@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 
 import 'file_type.dart';
+import 'dart:io' show Platform;
 
 //export file type enum
 export 'package:share_social_flutter/file_type.dart';
@@ -17,6 +18,7 @@ class FlutterShareSocial {
   static const String _methodWhatsAppBusiness = 'whatsapp_business_share';
   static const String _methodFaceBook = 'facebook_share';
   static const String _methodTwitter = 'twitter_share';
+  static const String _methodTwitterTweet = 'twitter_share_tweet';
   static const String _methodInstagramShare = 'instagram_share';
   static const String _methodSystemShare = 'system_share';
   static const String _methodTelegramShare = 'telegram_share';
@@ -221,6 +223,9 @@ class FlutterShareSocial {
 
   ///share to twitter
   ///[msg] string that you want share.
+  ///
+  ///
+  ///
   Future<String?> shareToTwitter({
     required String msg,
     String url = '',
@@ -258,6 +263,7 @@ class FlutterShareSocial {
   ///share file to instagram
   Future<String?> shareToInstagram({
     required String imagePath,
+    FileType fileType = FileType.image,
     bool openMarket = true,
     OnSuccessHandler? onSuccess,
     OnCancelHandler? onCancel,
@@ -266,6 +272,11 @@ class FlutterShareSocial {
     final Map<String, dynamic> arguments = <String, dynamic>{};
     arguments.putIfAbsent('url', () => imagePath);
     arguments.putIfAbsent('openMarket', () => openMarket);
+    if (fileType == FileType.image) {
+      arguments.putIfAbsent('fileType', () => 'image');
+    } else {
+      arguments.putIfAbsent('fileType', () => 'video');
+    }
     String? result;
 
     try {
@@ -291,7 +302,7 @@ class FlutterShareSocial {
 
   Future<String?> shareToMessenger({
     required String msg,
-    String ?url,
+    String? url,
     bool openMarket = true,
     OnSuccessHandler? onSuccess,
     OnCancelHandler? onCancel,

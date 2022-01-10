@@ -45,6 +45,7 @@ public class FlutterShareSocialPlugin implements MethodCallHandler, FlutterPlugi
     final private static String _methodWhatsAppBusiness = "whatsapp_business_share";
     final private static String _methodFaceBook = "facebook_share";
     final private static String _methodTwitter = "twitter_share";
+    final private static String _methodTwitterTweet = "twitter_share_tweet";
     final private static String _methodSystemShare = "system_share";
     final private static String _methodInstagramShare = "instagram_share";
     final private static String _methodTelegramShare = "telegram_share";
@@ -61,6 +62,9 @@ public class FlutterShareSocialPlugin implements MethodCallHandler, FlutterPlugi
     private final static String MESSENGER_PACKAGE_NAME = "com.facebook.orca";
     private final static String LINE_PACKAGE_NAME = "jp.naver.line.android";
     private final static String BEEBUSH_PACKAGE_NAME = "com.beebush";
+
+    private final static int TWITTER_REQUEST_CODE = 0xc0ce;
+    private final static int INSTAGRAM_REQUEST_CODE = 0xc0c3;
 
     private Activity activity;
     private static CallbackManager callbackManager;
@@ -252,25 +256,37 @@ public class FlutterShareSocialPlugin implements MethodCallHandler, FlutterPlugi
     /**
      * share to twitter
      *
+     * Gửi qua tin nhắn
      * @param url    String
      * @param msg    String
      * @param result Result
      */
+    // private void shareToTwitter(String url, String msg, Result result) {
+    //     try {
+    //         TweetComposer.Builder builder = new TweetComposer.Builder(activity)
+    //                 .text(msg);
+    //         if (url != null && url.length() > 0) {
+    //             builder.url(new URL(url));
+    //         }
+    //         builder.show();
+    //         result.success("success");
+    //         methodChannel.invokeMethod("onSuccess", "open-share");
+    //     } catch (MalformedURLException e) {
+    //         methodChannel.invokeMethod("onError", e);
+    //         e.printStackTrace();
+    //     }
+    // }
     private void shareToTwitter(String url, String msg, Result result) {
         try {
-            TweetComposer.Builder builder = new TweetComposer.Builder(activity)
-                    .text(msg);
-            if (url != null && url.length() > 0) {
-                builder.url(new URL(url));
-            }
-            builder.show();
-            result.success("success");
-            methodChannel.invokeMethod("onSuccess", "open-share");
+            final String tweetUrl = String.format("https://twitter.com/intent/tweet?text=%s&url=%s", msg, url);
+            final Uri uri = Uri.parse(tweetUrl);
+            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, uri), TWITTER_REQUEST_CODE);
         } catch (MalformedURLException e) {
             methodChannel.invokeMethod("onError", e);
             e.printStackTrace();
         }
     }
+    
 
     /**
      * share to whatsapp
