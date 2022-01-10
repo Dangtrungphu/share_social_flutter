@@ -261,31 +261,31 @@ public class FlutterShareSocialPlugin implements MethodCallHandler, FlutterPlugi
      * @param msg    String
      * @param result Result
      */
-    // private void shareToTwitter(String url, String msg, Result result) {
-    //     try {
-    //         TweetComposer.Builder builder = new TweetComposer.Builder(activity)
-    //                 .text(msg);
-    //         if (url != null && url.length() > 0) {
-    //             builder.url(new URL(url));
-    //         }
-    //         builder.show();
-    //         result.success("success");
-    //         methodChannel.invokeMethod("onSuccess", "open-share");
-    //     } catch (MalformedURLException e) {
-    //         methodChannel.invokeMethod("onError", e);
-    //         e.printStackTrace();
-    //     }
-    // }
     private void shareToTwitter(String url, String msg, Result result) {
         try {
-            final String tweetUrl = String.format("https://twitter.com/intent/tweet?text=%s&url=%s", msg, url);
-            final Uri uri = Uri.parse(tweetUrl);
-            activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, uri), TWITTER_REQUEST_CODE);
+            TweetComposer.Builder builder = new TweetComposer.Builder(activity)
+                    .text(msg);
+            if (url != null && url.length() > 0) {
+                builder.url(new URL(url));
+            }
+            builder.show();
+            result.success("success");
+            methodChannel.invokeMethod("onSuccess", "open-share");
         } catch (MalformedURLException e) {
             methodChannel.invokeMethod("onError", e);
             e.printStackTrace();
         }
     }
+    // private void shareToTwitter(String url, String msg, Result result) {
+    //     try {
+    //         final String tweetUrl = String.format("https://twitter.com/intent/tweet?text=%s&url=%s", msg, url);
+    //         final Uri uri = Uri.parse(tweetUrl);
+    //         activity.startActivityForResult(new Intent(Intent.ACTION_VIEW, uri), TWITTER_REQUEST_CODE);
+    //     } catch (MalformedURLException e) {
+    //         methodChannel.invokeMethod("onError", e);
+    //         e.printStackTrace();
+    //     }
+    // }
     
 
     /**
