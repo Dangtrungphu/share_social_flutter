@@ -249,7 +249,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
         let urlstring = message["url"] as! String
         let quote = message["msg"] as! String
-        let twitterUrl =  "fb-messenger-share-api://share?quote=\(quote)"
+        let twitterUrl =  "fb-messenger://share?quote=\(quote)"
         
         let urlTextEscaped = urlstring.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
         let url = URL(string: urlTextEscaped ?? "")
