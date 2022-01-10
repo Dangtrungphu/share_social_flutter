@@ -90,7 +90,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
         }
         else if(call.method.elementsEqual(_methodMessengerShare)){
             let args = call.arguments as? Dictionary<String,Any>
-            shareMessenger(message: args!, result: result)
+            shareMessenger(message: args!["msg"] as! String, url: args!["url"] as! String,, result: result)
         }
         else if(call.method.elementsEqual(_methodLineShare)){
             let args = call.arguments as? Dictionary<String,Any>
@@ -246,9 +246,9 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
        
         
     // }
-    func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
-        let urlstring = message["url"] as! String
-        let quote = message["msg"] as! String
+    func shareMessenger(message:String, url:String, result: @escaping FlutterResult)  {
+        let urlstring = url
+        let quote = message
         let twitterUrl =  "fb-messenger://share?quote=\(quote)"
         
         let urlTextEscaped = urlstring.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
