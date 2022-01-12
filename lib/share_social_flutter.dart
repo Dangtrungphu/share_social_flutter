@@ -302,7 +302,7 @@ class FlutterShareSocial {
 
   Future<String?> shareToMessenger({
     required String msg,
-    String? url,
+    String? url = '',
     bool openMarket = true,
     OnSuccessHandler? onSuccess,
     OnCancelHandler? onCancel,
