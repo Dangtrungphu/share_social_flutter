@@ -228,50 +228,46 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     }
 
     // Share Messenger
-    // func shareMessenger(message:Dictionary<String,Any>, result: @escaping FlutterResult)  {
-    //     let shareContent = ShareLinkContent()
-    //     // shareContent.contentURL = URL.init(string: message["url"] as! String)!
-    //     guard let url = URL(string: message["url"] as! String) else {
-    //         preconditionFailure("URL is invalid")
-    //     }
+    func shareMessenger(message:String, url:String, result: @escaping FlutterResult)  {
+        let shareContent = ShareLinkContent()
+        // shareContent.contentURL = URL.init(string: message["url"] as! String)!
+        guard let url = URL(string: url) else {
+            preconditionFailure("URL is invalid")
+        }
 
-    //     shareContent.contentURL = url
-    //     shareContent.quote = message["msg"] as? String
+        shareContent.contentURL = url
+        shareContent.quote = message
         
-    //     let shareDialog = MessageDialog(content: shareContent, delegate: self)
-    //     shareDialog.show()
-    //     result("Sucess")
-
-
-       
+        let shareDialog = MessageDialog(content: shareContent, delegate: self)
+        shareDialog.show()
+        result("Sucess")
+    }
+    // func shareMessenger(message:String, url:String, result: @escaping FlutterResult)  {
+    //     let urlstring = url
+    //     let quote = message
+    //     let twitterUrl =  "fb-messenger-share-api://share?quote=\(quote)"
+        
+    //     let urlTextEscaped = urlstring.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+    //     let url = URL(string: urlTextEscaped ?? "")
+        
+    //     let urlWithLink = twitterUrl + url!.absoluteString
+        
+    //     let escapedShareString = urlWithLink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+    //     // cast to an url
+    //     let urlschme = URL(string: escapedShareString)
+    //     // open in safari
+    //     do {
+    //         if UIApplication.shared.canOpenURL(urlschme! as URL){
+    //             UIApplication.shared.openURL(urlschme!)
+    //             result("Sucess")
+    //         }else{
+    //             openMarket(id: id_messenger)
+    //             result(FlutterError(code: "Not found", message: "Messenger is not found", details: "Twitter not intalled or Check url scheme."));
+                
+    //         }
+    //     }
         
     // }
-    func shareMessenger(message:String, url:String, result: @escaping FlutterResult)  {
-        let urlstring = url
-        let quote = message
-        let twitterUrl =  "fb-messenger://share?quote=\(quote)"
-        
-        let urlTextEscaped = urlstring.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
-        let url = URL(string: urlTextEscaped ?? "")
-        
-        let urlWithLink = twitterUrl + url!.absoluteString
-        
-        let escapedShareString = urlWithLink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-        // cast to an url
-        let urlschme = URL(string: escapedShareString)
-        // open in safari
-        do {
-            if UIApplication.shared.canOpenURL(urlschme! as URL){
-                UIApplication.shared.openURL(urlschme!)
-                result("Sucess")
-            }else{
-                openMarket(id: id_messenger)
-                result(FlutterError(code: "Not found", message: "Messenger is not found", details: "Twitter not intalled or Check url scheme."));
-                
-            }
-        }
-        
-    }
 
     // share twitter params
     // @ message
@@ -386,14 +382,71 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     
     // share image via instagram stories.
     // @ args image url
+    // func shareInstagram(args:Dictionary<String,Any>)  {
+    //     let imageUrl=args["url"] as! String
+    //     let image = UIImage(named: imageUrl)
+    //     if(image==nil){
+    //         self.result!("File format not supported Please check the file.")
+    //         return;
+    //     }
+    //     guard let instagramURL = NSURL(string: "instagram://app") else {
+    //         if let result = result {
+    //             self.openMarket(id: self.id_instagram)
+    //             self.result?("Instagram app is not installed on your device")
+    //             result(false)
+    //         }
+    //         return
+    //     }
+    //     do{
+    //         try PHPhotoLibrary.shared().performChangesAndWait {
+
+    //             let request = PHAssetChangeRequest.creationRequestForAsset(from: image!)
+    //             let assetId = request.placeholderForCreatedAsset?.localIdentifier
+    //             let instShareUrl:String? = "instagram://library?LocalIdentifier=" + assetId!
+                
+    //             //Share image
+    //             if UIApplication.shared.canOpenURL(instagramURL as URL) {
+    //                 if let sharingUrl = instShareUrl {
+    //                     if let urlForRedirect = NSURL(string: sharingUrl) {
+    //                         if #available(iOS 10.0, *) {
+    //                             UIApplication.shared.open(urlForRedirect as URL, options: [:], completionHandler: nil)
+    //                         }
+    //                         else{
+    //                             UIApplication.shared.openURL(urlForRedirect as URL)
+    //                         }
+    //                     }
+    //                     self.result?("Success")
+    //                 }
+    //             } else{
+    //                 self.openMarket(id: self.id_instagram)
+    //                 self.result?("Instagram app is not installed on your device")
+    //             }
+    //         }
+        
+    //     } catch {
+    //         print("Fail")
+    //     }
+    // }
+
     func shareInstagram(args:Dictionary<String,Any>)  {
-        let imageUrl=args["url"] as! String
-    
-        let image = UIImage(named: imageUrl)
-        if(image==nil){
+        let fileUrl=args["url"] as! String
+        let type=args["fileType"] as! String
+
+        var image:UIImage?
+        var video:URL?
+
+        var assetId:String?
+
+        if(type == "image") {
+            image = UIImage(named: fileUrl)
+        } else if(type == "video") {
+            video = URL(fileURLWithPath: fileUrl)
+        }
+        if(image==nil && video==nil){
             self.result!("File format not supported Please check the file.")
             return;
         }
+
         guard let instagramURL = NSURL(string: "instagram://app") else {
             if let result = result {
                 self.openMarket(id: self.id_instagram)
@@ -402,37 +455,61 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
             }
             return
         }
-        
         do{
-            try PHPhotoLibrary.shared().performChangesAndWait {
-                let request = PHAssetChangeRequest.creationRequestForAsset(from: image!)
-                let assetId = request.placeholderForCreatedAsset?.localIdentifier
-                let instShareUrl:String? = "instagram://library?LocalIdentifier=" + assetId!
+            try PHPhotoLibrary.shared().performChanges({
+                var request:PHAssetChangeRequest?
                 
-                //Share image
-                if UIApplication.shared.canOpenURL(instagramURL as URL) {
-                    if let sharingUrl = instShareUrl {
-                        if let urlForRedirect = NSURL(string: sharingUrl) {
-                            if #available(iOS 10.0, *) {
-                                UIApplication.shared.open(urlForRedirect as URL, options: [:], completionHandler: nil)
-                            }
-                            else{
-                                UIApplication.shared.openURL(urlForRedirect as URL)
-                            }
-                        }
-                        self.result?("Success")
-                    }
-                } else{
-                    self.openMarket(id: self.id_instagram)
-                    self.result?("Instagram app is not installed on your device")
+                if(image != nil) {
+                    request = PHAssetChangeRequest.creationRequestForAsset(from: image!)
+                } else if (video != nil) {
+                    request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: video!)
                 }
-            }
-        
+
+                if(request==nil){
+                    self.result!("An error occured while saving the file.")
+                    return;
+                }
+                
+                assetId = request!.placeholderForCreatedAsset?.localIdentifier
+
+            }, completionHandler: { success, error in 
+                DispatchQueue.main.async {
+                    guard error == nil else {
+                        // handle error
+                        return
+                    }
+                    guard let assetId = assetId else {
+                        // highly unlikely that it'll be nil,
+                        // but you should handle this error just in case
+                        return
+                    }
+
+                    let instShareUrl:String? = "instagram://library?LocalIdentifier=" + assetId
+
+                    //Share image
+                    if UIApplication.shared.canOpenURL(instagramURL as URL) {
+                        if let sharingUrl = instShareUrl {
+                            if let urlForRedirect = NSURL(string: sharingUrl) {
+                                if #available(iOS 10.0, *) {
+                                    // UIApplication.shared.open(urlForRedirect as URL, options: [:], completionHandler: nil)
+                                    UIApplication.shared.openURL(urlForRedirect as URL)
+                                }
+                                else{
+                                    UIApplication.shared.openURL(urlForRedirect as URL)
+                                }
+                            }
+                            self.result?("Success")
+                        }
+                    } else{
+                        self.openMarket(id: self.id_instagram)
+                        self.result?("Instagram app is not installed on your device")
+                    }
+                }
+            })
         } catch {
             print("Fail")
         }
     }
-
 
     // Mở sotre khi app chưa được cài
     public func openMarket(id:String){
