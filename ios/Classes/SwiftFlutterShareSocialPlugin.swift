@@ -230,12 +230,7 @@ public class SwiftFlutterShareSocialPlugin: NSObject, FlutterPlugin, SharingDele
     // Share Messenger
     func shareMessenger(message:String, url:String, result: @escaping FlutterResult)  {
         let shareContent = ShareLinkContent()
-        // shareContent.contentURL = URL.init(string: message["url"] as! String)!
-        guard let url = URL(string: url) else {
-            preconditionFailure("URL is invalid")
-        }
-
-        shareContent.contentURL = url
+        shareContent.contentURL = URL.init(string: url as! String)!
         shareContent.quote = message
         
         let shareDialog = MessageDialog(content: shareContent, delegate: self)
